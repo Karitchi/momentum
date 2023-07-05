@@ -1,13 +1,23 @@
 import { Pool } from 'pg'
 
-export function connect() {
-    const pool = new Pool({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'momentum',
-        password: 'example',
-        port: 5432,
-    })
-    console.log("postgres connected!")
-    return pool
+export async function initDB() {
+    try {
+        console.log("Connecting to postgres...")
+
+        const pool = new Pool({
+            user: 'postgres',
+            host: 'localhost',
+            database: 'momentum',
+            password: 'example',
+            port: 5432,
+        })
+
+        await pool.query('SELECT NOW() as now')
+
+        console.log("Postgres connected!")
+        
+        return pool
+    } catch (error) {
+        throw error
+    }
 }
