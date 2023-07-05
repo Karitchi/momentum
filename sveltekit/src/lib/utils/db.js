@@ -1,6 +1,5 @@
 import pg from "pg";
 const { Pool } = pg;
-import bcrypt from 'bcrypt'
 
 export function initDB() {
     const pool = new Pool({
@@ -10,6 +9,5 @@ export function initDB() {
         password: 'example',
         port: 5432,
     })
-
     return pool
 }

@@ -9,7 +9,7 @@ export const actions = {
         } catch (error) {
             throw error
         }
-        throw redirect(303, '/login')
+        throw redirect(308, '/login')
     },
 };
 
