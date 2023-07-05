@@ -1,5 +1,4 @@
 <script>
-
 </script>
 
-hello
+<h1>Home</h1>

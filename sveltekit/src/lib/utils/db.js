@@ -1,6 +1,8 @@
-import { Pool } from 'pg'
+import pg from "pg";
+const { Pool } = pg;
+import bcrypt from 'bcrypt'
 
-export function connect() {
+export function initDB() {
     const pool = new Pool({
         user: 'postgres',
         host: 'localhost',
@@ -8,6 +10,6 @@ export function connect() {
         password: 'example',
         port: 5432,
     })
-    console.log("postgres connected!")
+
     return pool
 }
