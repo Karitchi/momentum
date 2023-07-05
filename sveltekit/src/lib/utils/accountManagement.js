@@ -1,3 +1,4 @@
+import { error } from '@sveltejs/kit'
 import bcrypt from 'bcrypt'
 
 
@@ -50,6 +51,11 @@ export async function register(request, cookies, locals) {
     const password = formData.get("password")
     const email = formData.get("email")
 
+    if (email == "") throw new error(400, "Please enter an email")
+    if (password == "") throw new error(400, "Please enter a password")
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) throw new error(400, "Invalid email address fromat. Check your email and try again")
     // generate sessionId
     const sessionId = crypto.randomUUID();
 
@@ -100,14 +106,20 @@ async function getFormData(request) {
 export async function login(event) {
 
     const { email, password } = await getFormData(event.request)
-    
+    if (email == "") throw new error(400, "Please enter an email address and try again")
+    if (password == "") throw new error(400, "Please enter a password and try again")
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) throw new error(400, "Invalid email address fromat. Check your email and try again")
+
+    // get user info
     let text = 'SELECT id, email, password FROM users WHERE email = $1'
     let values = [email]
     let { rows } = await event.locals.pool.query(text, values)
-    if (rows.length < 1) throw new Error("This account does not exist, please register instead.", 401)
+    if (rows.length < 1) throw new error(400, "This email address does not match any account. Please check your email address and try again or register a new account.")
 
+    // check password
     const match = await bcrypt.compare(password, rows[0].password);
-    if (!match) throw new Error("Bad password.", 401)
+    if (!match) throw new error(400, "Invalid password. Please check your password and try again")
 
     const sessionId = crypto.randomUUID();
     const userId = rows[0].id
@@ -119,15 +131,17 @@ export async function login(event) {
             }
         )
 
+
+    // add session id in db
     text = `
         UPDATE users 
         SET session_id = $1 
         WHERE id = $2;
         `
     values = [hashedSessionId, userId]
-
     event.locals.pool.query(text, values)
 
+    // set cookies
     event.cookies.set('session_id', sessionId, {
         path: '/',
         maxAge: 604800

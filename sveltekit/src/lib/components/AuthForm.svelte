@@ -1,5 +1,6 @@
 <script>
     export let action;
+    export let form;
 </script>
 
 <form
@@ -11,7 +12,7 @@
         <input
             type="email"
             class="form-control"
-            value="test@mail.com"
+            value=""
             id="email"
             aria-describedby="emailHelp"
             placeholder="example@email.com"
@@ -24,7 +25,7 @@
         <input
             type="password"
             class="form-control"
-            value="password"
+            value=""
             id="password"
             placeholder="password"
             name="password"
@@ -32,5 +33,8 @@
         />
     </div>
 
-    <button type="submit" class="btn btn-primary w-100">{action}</button>
+    <button type="submit" class="btn btn-primary mb-3 w-100">{action}</button>
+    {#if form}
+        <p class="text-danger">{form}</p>
+    {/if}
 </form>
