@@ -1,5 +1,16 @@
 <script>
+    import { page } from "$app/stores";
     export let data;
+    let isRegister, isLogin;
+    $: {
+        if ($page.url.pathname === "/register") {
+            isRegister = true;
+            isLogin = false;
+        } else {
+            isRegister = false;
+            isLogin = true;
+        }
+    }
 </script>
 
 <nav class="mt-3 navbar navbar-expand-lg bg-body-secondary rounded">
@@ -21,13 +32,16 @@
                 {#if !data.isUserConnected}
                     <li class="nav-item">
                         <a
-                            class="nav-link active"
+                            class="nav-link {isRegister ? 'active' : ''}"
                             aria-current="page"
                             href="/register">Register</a
                         >
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
+                        <a
+                            class="nav-link {isLogin ? 'active' : ''}"
+                            href="/login">Login</a
+                        >
                     </li>
                 {:else}
                     <form method="POST">
