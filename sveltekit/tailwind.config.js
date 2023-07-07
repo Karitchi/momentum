@@ -2,7 +2,12 @@
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
-    extend: {},
+    extend: {
+      height: {
+        '128': '32rem', // Custom height class 'h-128' with a value of 32rem
+        '144': '36rem', // Custom height class 'h-144' with a value of 36rem
+      },
+    },
   },
   plugins: [require("daisyui")],
   daisyui: {
