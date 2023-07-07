@@ -4,7 +4,7 @@
     export let data;
 </script>
 
-<div class="container">
+<div>
     <Navbar {data} />
     <slot />
 </div>

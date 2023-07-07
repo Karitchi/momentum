@@ -1,4 +1,5 @@
 <script>
+    import Post from "$lib/components/Post/Post.svelte";
 </script>
 
-<h1>Home</h1>
+<Post />
