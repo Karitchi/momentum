@@ -3,14 +3,14 @@ import { redirect } from '@sveltejs/kit';
 
 
 export const actions = {
-    default: async (event) => {
+    logout: async (event) => {
         try {
             await logout(event)
         } catch (error) {
             throw error
         }
         throw redirect(308, '/login')
-    },
+    }
 };
 
 

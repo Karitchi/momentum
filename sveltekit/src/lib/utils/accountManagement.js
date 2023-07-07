@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit'
 import bcrypt from 'bcrypt'
 
 
-async function getCookies(cookies) {
+export async function getCookies(cookies) {
     const userId = cookies.get("user_id")
     const sessionId = cookies.get("session_id")
 
