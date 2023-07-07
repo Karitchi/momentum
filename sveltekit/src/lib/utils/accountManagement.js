@@ -18,11 +18,10 @@ export async function isUserConnected(event) {
     if (!sessionId || !userId) {
         return false
     }
-
     const text = `
     SELECT session_id 
     FROM users 
-    WHERE id = $1
+    WHERE user_id = $1
     `
     const values = [userId]
     const { rows } = await event.locals.pool.query(text, values)
@@ -53,7 +52,7 @@ export async function register(request, cookies, locals) {
 
     if (email == "") throw new error(400, "Please enter an email")
     if (password == "") throw new error(400, "Please enter a password")
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) throw new error(400, "Invalid email address fromat. Check your email and try again")
     // generate sessionId
@@ -69,13 +68,13 @@ export async function register(request, cookies, locals) {
     });
 
     // store hashed password and sessionId
-    let text = 'INSERT INTO users (email, password, session_id) VALUES($1, $2, $3) RETURNING * '
-    let values = [email, hashedPassword, hashedSessionId]
+    let text = 'INSERT INTO users (email, password, session_id, username) VALUES($1, $2, $3, $4) RETURNING * '
+    let values = [email, hashedPassword, hashedSessionId, 'Thierry']
 
     const query = await locals.pool.query(text, values)
 
     // get userId
-    const userId = query.rows[0].id
+    const userId = query.rows[0].user_id
 
     // set non hashed sessionId cookie and userId cookie
     cookies.set('session_id', sessionId, {
@@ -104,7 +103,6 @@ async function getFormData(request) {
 }
 
 export async function login(event) {
-
     const { email, password } = await getFormData(event.request)
     if (email == "") throw new error(400, "Please enter an email address and try again")
     if (password == "") throw new error(400, "Please enter a password and try again")
@@ -112,17 +110,17 @@ export async function login(event) {
     if (!emailRegex.test(email)) throw new error(400, "Invalid email address fromat. Check your email and try again")
 
     // get user info
-    let text = 'SELECT id, email, password FROM users WHERE email = $1'
+    let text = 'SELECT user_id, email, password FROM users WHERE email = $1'
     let values = [email]
     let { rows } = await event.locals.pool.query(text, values)
-    if (rows.length < 1) throw new error(400, "This email address does not match any account. Please check your email address and try again or register a new account.")
 
+    if (rows.length < 1) throw new error(400, "This email address does not match any account. Please check your email address and try again or register a new account.")
     // check password
     const match = await bcrypt.compare(password, rows[0].password);
     if (!match) throw new error(400, "Invalid password. Please check your password and try again")
 
     const sessionId = crypto.randomUUID();
-    const userId = rows[0].id
+    const userId = rows[0].user_id
 
     const hashedSessionId = await bcrypt.hash(sessionId, 10)
         .then(
@@ -131,12 +129,11 @@ export async function login(event) {
             }
         )
 
-
     // add session id in db
     text = `
         UPDATE users 
         SET session_id = $1 
-        WHERE id = $2;
+        WHERE user_id = $2;
         `
     values = [hashedSessionId, userId]
     event.locals.pool.query(text, values)
@@ -162,7 +159,7 @@ export async function logout(event) {
     const text = `
         UPDATE users
         SET session_id = NULL
-        WHERE id = $1;
+        WHERE user_id = $1;
     `
     const values = [userId]
     event.locals.pool.query(text, values)

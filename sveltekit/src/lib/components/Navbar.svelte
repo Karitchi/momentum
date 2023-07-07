@@ -27,6 +27,8 @@
             </div>
         {:else}
             <div class="dropdown dropdown-end">
+                <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+                <!-- svelte-ignore a11y-label-has-associated-control -->
                 <label tabindex="0" class="btn btn-ghost btn-circle avatar">
                     <!-- <img src="" /> -->
                     <svg
@@ -44,20 +46,20 @@
                         />
                     </svg>
                 </label>
+                <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
                 <ul
                     tabindex="0"
                     class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
                 >
                     <li>
+                        <!-- svelte-ignore a11y-invalid-attribute -->
                         <a class="justify-between" href="#"> Profile </a>
                     </li>
-                    <li>
-                        <form method="POST">
-                            <button type="submit" class="link" value="Logout">
-                                Logout</button
-                            >
-                        </form>
-                    </li>
+                    <form method="POST">
+                        <li>
+                            <input type="submit" value="Logout" />
+                        </li>
+                    </form>
                 </ul>
             </div>
         {/if}

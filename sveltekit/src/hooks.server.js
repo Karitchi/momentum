@@ -9,9 +9,8 @@ export async function handle({ event, resolve }) {
     try {
         // reassign pool to event.locals.pool since event.locals get flushed
         event.locals.pool = pool
-
+        
         event.locals.isUserConnected = await isUserConnected(event)
-
         if (event.url.pathname !== "/login" && event.url.pathname !== "/register") {
             if (!event.locals.isUserConnected) throw redirect(308, '/login')
         }
