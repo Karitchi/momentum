@@ -3,9 +3,8 @@
 </script>
 
 <div
-    class="carousel carousel-center border rounded-xl bg-black h- xs:h-72 md:h-80 lg:h-96 xl:h-128 2xl:h-144"
+    class="flex carousel carousel-center border rounded-xl bg-black"
 >
-    <h1>hello</h1>
     <!-- {#each imageUrls as imageUrl} -->
         <div id="slide1" class="carousel-item relative w-full justify-center">
             <img
