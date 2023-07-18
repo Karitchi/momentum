@@ -3,4 +3,4 @@
     export let data;
 </script>
 
-<Post {data} />
+<Post {data}/>

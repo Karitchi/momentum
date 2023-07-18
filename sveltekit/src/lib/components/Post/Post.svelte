@@ -7,7 +7,7 @@
 
 <div class="grid justify-items-center">
     {#each data.posts as post}
-        <div class="border rounded-xl shadow-xl p-3 w-1/2 h-auto">
+        <div class="border rounded-xl shadow-xl p-3 w-1/2 h-auto mb-4">
             <!-- todo add poster info -->
             <Carousel imageURLs={post.url} />
             <Reaction />
