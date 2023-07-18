@@ -1,5 +1,7 @@
 import { logout } from '$lib/utils/accountManagement'
 import { redirect } from '@sveltejs/kit';
+import { getPosts } from '$lib/utils/post.js'
+
 
 
 export const actions = {
@@ -13,4 +15,11 @@ export const actions = {
     }
 };
 
-
+export async function load(request) {
+    try {
+        const posts = await getPosts(request)
+        return { posts };
+    } catch (error) {
+        throw error
+    }
+}

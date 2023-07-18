@@ -4,11 +4,11 @@
     let isRegister, isLogin;
     $: {
         if ($page.url.pathname === "/register") {
-            isRegister = true;
-            isLogin = false;
+            isRegister = !isRegister;
+            isLogin = !isLogin;
         } else {
-            isRegister = false;
-            isLogin = true;
+            isRegister = !isRegister;
+            isLogin = !isLogin;
         }
     }
 </script>

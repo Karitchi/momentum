@@ -7,6 +7,22 @@
     class="mt-5 p-5 w-50 m-auto body-tertiary border rounded shadow"
     method="POST"
 >
+    {#if action == "Register"}
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input
+                type="text"
+                class="form-control"
+                value=""
+                id="username"
+                aria-describedby="emailHelp"
+                placeholder="user123"
+                name="username"
+                required="true"
+            />
+        </div>
+    {/if}
+
     <div class="mb-3">
         <label for="email" class="form-label">Email address</label>
         <input

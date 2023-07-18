@@ -2,4 +2,4 @@ docker-compose.yaml
 postgres
 pgadmin
 question.txt
-sveltekit/files
+sveltekit/public/posts

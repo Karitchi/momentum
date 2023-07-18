@@ -8,7 +8,7 @@ export const actions = {
         } catch (error) {
             if (error.code === "23505") return fail(400, "An account with this email address already exists.");
             else if (error.status === 400) return fail(400, error.body.message)
-            
+
             throw error
         }
         throw redirect(303, '/');

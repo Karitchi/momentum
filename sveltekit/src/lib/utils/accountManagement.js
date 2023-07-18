@@ -18,19 +18,25 @@ export async function isUserConnected(event) {
     if (!sessionId || !userId) {
         return false
     }
-    const text = `
-    SELECT session_id 
-    FROM users 
-    WHERE user_id = $1
-    `
-    const values = [userId]
-    const { rows } = await event.locals.pool.query(text, values)
+
+
+    const query = {
+        text: `
+            SELECT token 
+            FROM sessions 
+            WHERE user_id = $1
+        `,
+        values: [userId]
+    }
+
+    const { rows } = await event.locals.pool.query(query)
 
     if (rows?.length < 1) {
         return false
     }
 
-    const hashedSessionId = rows[0].session_id
+    const hashedSessionId = rows[0].token
+    console.log(hashedSessionId)
 
     const isUserConnected = await bcrypt.compare(sessionId, hashedSessionId)
         .then(function (result) {
@@ -41,20 +47,25 @@ export async function isUserConnected(event) {
         })
 
 
+    console.log(isUserConnected)
     return isUserConnected
 }
 
 export async function register(request, cookies, locals) {
     // get form data
     const formData = await request.formData();
-    const password = formData.get("password")
+    const username = formData.get("username")
     const email = formData.get("email")
+    const password = formData.get("password")
 
+
+    if (username == "") throw new error(400, "Please enter username")
     if (email == "") throw new error(400, "Please enter an email")
     if (password == "") throw new error(400, "Please enter a password")
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) throw new error(400, "Invalid email address fromat. Check your email and try again")
+
     // generate sessionId
     const sessionId = crypto.randomUUID();
 
@@ -68,13 +79,31 @@ export async function register(request, cookies, locals) {
     });
 
     // store hashed password and sessionId
-    let text = 'INSERT INTO users (email, password, session_id, username) VALUES($1, $2, $3, $4) RETURNING * '
-    let values = [email, hashedPassword, hashedSessionId, 'Thierry']
+    let text = `
+        INSERT INTO users (username, email, password)
+        VALUES($1, $2, $3) 
+        RETURNING *
+    `
+    let values = [username, email, hashedPassword]
 
-    const query = await locals.pool.query(text, values)
+
+    let query = await locals.pool.query(text, values)
+
 
     // get userId
     const userId = query.rows[0].user_id
+
+
+    // insert user_id && token
+    text = `
+    INSERT INTO sessions (user_id, token)
+    VALUES($1, $2) 
+    RETURNING *
+    `
+    values = [userId, hashedSessionId]
+
+    query = await locals.pool.query(text, values)
+
 
     // set non hashed sessionId cookie and userId cookie
     cookies.set('session_id', sessionId, {
@@ -92,6 +121,8 @@ export async function register(request, cookies, locals) {
         sameSite: 'lax',
         maxAge: 604800
     });
+
+    console.log("hello")
 }
 
 async function getFormData(request) {
@@ -131,11 +162,10 @@ export async function login(event) {
 
     // add session id in db
     text = `
-        UPDATE users 
-        SET session_id = $1 
-        WHERE user_id = $2;
+        INSERT INTO sessions(user_id, token)
+        VALUES ($1, $2)
         `
-    values = [hashedSessionId, userId]
+    values = [userId, hashedSessionId]
     event.locals.pool.query(text, values)
 
     // set cookies
@@ -154,11 +184,12 @@ export async function logout(event) {
 
     if (!await isUserConnected(event)) return
 
-    const { userId } = getCookies(event.cookies)
+    const { userId } = await getCookies(event.cookies)
+
+    console.log(userId)
 
     const text = `
-        UPDATE users
-        SET session_id = NULL
+        DELETE FROM sessions
         WHERE user_id = $1;
     `
     const values = [userId]

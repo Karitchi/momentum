@@ -9,7 +9,7 @@ export async function initDB() {
             user: 'postgres',
             host: 'localhost',
             database: 'momentum',
-            password: 'example',
+            password: 'password',
             port: 5432,
         })
 
