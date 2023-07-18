@@ -1,7 +1,5 @@
 <script>
     export let imageURLs
-
-    console.log(imageURLs)
 </script>
 
 <div

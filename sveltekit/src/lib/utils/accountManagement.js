@@ -36,7 +36,6 @@ export async function isUserConnected(event) {
     }
 
     const hashedSessionId = rows[0].token
-    console.log(hashedSessionId)
 
     const isUserConnected = await bcrypt.compare(sessionId, hashedSessionId)
         .then(function (result) {
@@ -47,7 +46,6 @@ export async function isUserConnected(event) {
         })
 
 
-    console.log(isUserConnected)
     return isUserConnected
 }
 
@@ -122,7 +120,6 @@ export async function register(request, cookies, locals) {
         maxAge: 604800
     });
 
-    console.log("hello")
 }
 
 async function getFormData(request) {
@@ -186,7 +183,6 @@ export async function logout(event) {
 
     const { userId } = await getCookies(event.cookies)
 
-    console.log(userId)
 
     const text = `
         DELETE FROM sessions

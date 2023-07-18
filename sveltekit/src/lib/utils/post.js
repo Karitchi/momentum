@@ -1,5 +1,6 @@
 import { getCookies, isUserConnected } from '$lib/utils/accountManagement'
 import { error, redirect } from '@sveltejs/kit'
+import { debug } from 'console';
 import { writeFile } from 'fs/promises';
 import { path } from 'path'
 
@@ -14,10 +15,10 @@ export async function post(event) {
 
     const fileUUID = crypto.randomUUID()
     const fileExt = image.name.split('.').pop();
-    const imageURL = fileUUID + "." + fileExt
+    const url = fileUUID + "." + fileExt
 
     // store file to fs
-    writeFile(`./static/posts/${imageURL}`, await image.stream());
+    writeFile(`./public/posts/${url}`, await image.stream());
 
     let text = `
         INSERT INTO posts (user_id, caption)
@@ -26,23 +27,22 @@ export async function post(event) {
     `
     let values = [userId, caption]
     const { rows } = await event.locals.pool.query(text, values)
-    console.log(rows)
     text = `
-        INSERT INTO images (post_id, image_url)
+        INSERT INTO images (post_id, url)
         VALUES ($1, $2)
     `
-    values = [rows[0].post_id, imageURL]
-
+    values = [rows[0].post_id, url]
     event.locals.pool.query(text, values)
 }
 
 export async function getPosts(request) {
 
     const text = `
-        SELECT user_id, caption, created_at, image_url
+        SELECT user_id, caption, created_at, url
         FROM posts
         JOIN images ON posts.post_id = images.post_id
     `
     const { rows } = await request.locals.pool.query(text)
+
     return rows
 }
