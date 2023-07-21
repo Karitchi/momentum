@@ -3,7 +3,7 @@
 
     let action = "show more";
     let maxHeigt = true;
-    function toggleHeight() {
+    function showMoreLess() {
         if (maxHeigt == true) {
             maxHeigt = !maxHeigt;
             action = "show less";
@@ -13,12 +13,15 @@
         }
     }
 </script>
-
 <div
     class="{maxHeigt == true ? 'max-h-12' : ''} overflow-hidden"
-    on:click={toggleHeight}
+    on:click={showMoreLess}
+    on:keydown={showMoreLess}
+    role="button"
+    tabindex="0"
+    aria-label="Show more/less text"
 >
     {caption}
 </div>
 
-<button class="link" on:click={toggleHeight}>{action}</button>
+<button class="link" on:click={showMoreLess}>{action}</button>
