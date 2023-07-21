@@ -13,7 +13,16 @@ export async function post(event) {
     const caption = await formData.get("caption")
 
     let fileUUID, fileExt, url
-    
+
+    let text = `
+        INSERT INTO posts (user_id, caption)
+        VALUES ($1, $2)
+        RETURNING post_id
+    `
+    let values = [userId, caption]
+
+    const { rows } = await event.locals.pool.query(text, values)
+
     for (const image of images) {
         fileUUID = crypto.randomUUID()
         fileExt = image.name.split('.').pop();
@@ -22,13 +31,6 @@ export async function post(event) {
         // store file to fs
         writeFile(`./public/posts/${url}`, await image.stream());
 
-        let text = `
-            INSERT INTO posts (user_id, caption)
-            VALUES ($1, $2)
-            RETURNING post_id
-        `
-        let values = [userId, caption]
-        const { rows } = await event.locals.pool.query(text, values)
         text = `
             INSERT INTO images (post_id, url)
             VALUES ($1, $2)
@@ -41,9 +43,11 @@ export async function post(event) {
 export async function getPosts(request) {
 
     const text = `
-        SELECT user_id, caption, created_at, url
+        SELECT posts.post_id, posts.user_id, posts.caption, posts.created_at,
+        JSON_AGG(images.url) AS urls
         FROM posts
         JOIN images ON posts.post_id = images.post_id
+        GROUP BY posts.post_id;
     `
     const { rows } = await request.locals.pool.query(text)
 
