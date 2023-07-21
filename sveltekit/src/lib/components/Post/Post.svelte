@@ -9,9 +9,9 @@
 
 <div class="m-auto w-1/2">
     {#each data.posts as post}
-    <Carousel urls={post.urls} />
-    <Reaction />
-    <User username={post.username}/>
-    <Message caption={post.caption} />
+        <Carousel urls={post.urls} />
+        <Reaction postId={post.post_id} />
+        <User username={post.username} />
+        <Message caption={post.caption} />
     {/each}
 </div>

@@ -43,7 +43,7 @@ export async function post(event) {
 export async function getPosts(request) {
 
     const text = `
-        SELECT  posts.user_id, username, posts.caption, posts.created_at,
+        SELECT  posts.post_id, posts.user_id, username, posts.caption, posts.created_at,
         JSON_AGG(images.url) AS urls
         FROM posts
         JOIN images ON posts.post_id = images.post_id

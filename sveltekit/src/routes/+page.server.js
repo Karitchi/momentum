@@ -1,6 +1,7 @@
 import { logout } from '$lib/utils/accountManagement'
 import { redirect } from '@sveltejs/kit';
 import { getPosts } from '$lib/utils/post.js'
+import { like } from '$lib/utils/reactions.js'
 
 
 
@@ -12,6 +13,13 @@ export const actions = {
             throw error
         }
         throw redirect(308, '/login')
+    },
+    like: async (event) => {
+        try {
+            await like(event)
+        } catch (error) {
+            throw error
+        }
     }
 };
 
