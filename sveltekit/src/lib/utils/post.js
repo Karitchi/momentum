@@ -43,11 +43,12 @@ export async function post(event) {
 export async function getPosts(request) {
 
     const text = `
-        SELECT posts.post_id, posts.user_id, posts.caption, posts.created_at,
+        SELECT  posts.user_id, username, posts.caption, posts.created_at,
         JSON_AGG(images.url) AS urls
         FROM posts
         JOIN images ON posts.post_id = images.post_id
-        GROUP BY posts.post_id;
+        JOIN users ON posts.user_id = users.user_id
+        GROUP BY posts.post_id, users.username;
     `
     const { rows } = await request.locals.pool.query(text)
 
