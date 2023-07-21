@@ -5,10 +5,10 @@
     export let data;
 </script>
 
-<div class="m-auto w-1/2 ">
+<div class="m-auto w-1/2">
     {#each data.posts as post}
         <Carousel urls={post.urls} />
         <Reaction />
-        <Message message={post.message} />
+        <Message caption={post.caption} />
     {/each}
 </div>
